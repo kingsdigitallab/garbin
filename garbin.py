@@ -8,6 +8,8 @@ from pathlib import Path
 import pandas as pd
 import utils
 
+VERSION = '0.2'
+
 
 class Garbin:
     '''Data validation toolbox.
@@ -47,7 +49,7 @@ class Garbin:
 
     def parse_command_line(self):
         self.parser = argparse.ArgumentParser(
-            description='Data validator toolbox.',
+            description=f'Data validator toolbox ({VERSION})',
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog=self.get_actions_help()
         )
@@ -62,6 +64,11 @@ class Garbin:
             choices=['table', 'json', 'csv'],
             help='output format'
         )
+        self.parser.add_argument(
+            '-s', '--save',
+            action='store_true',
+            help='save intermediary outputs into data/out/ folder'
+        )
         self.args = self.parser.parse_args()
 
         self.action = self.args.action[0]
@@ -69,6 +76,11 @@ class Garbin:
     def action_help(self):
         '''Show help'''
         self.parser.print_help()
+
+    def has_save(self):
+        '''return True if intermediary outputs should be saved in data/out.
+        Only if the user has specified --save flag.'''
+        return self.args.save
 
     def get_actions_help(self, compact=False):
         ret = []
@@ -110,9 +122,7 @@ class Garbin:
                     self.compute_legibility(file_info)
                     # remove potentially long text from memory
                     if 'text' in file_info: del file_info['text']
-                    # print(file_info['legibility'], file_info)
                     ret.append(file_info)
-                    # break
 
         return ret
 
@@ -123,10 +133,15 @@ class Garbin:
         file_info['text'] = content.decode(encoding)
 
     def extract_pdf(self, file_info):
-        content = file_info['file'].read_bytes()
-        file_info['extraction'] = 'PDF'
-        content_utf8 = utils.extract_text_from_pdf(file_info['file'], True)
-        file_info['text'] = content_utf8
+        file_info['extraction'] = 'tesseract'
+        file_info['text'] = utils.extract_text_from_pdf(
+            file_info['file'], True
+        )
+        if self.has_save():
+            utils.write_file(
+                f'data/out/{file_info["file"].name}.txt',
+                file_info['text']
+            )
 
     def compute_legibility(self, file_info):
         ret = 0.0

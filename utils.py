@@ -112,3 +112,6 @@ def download(url, out_path):
     return ret
 
 
+def write_file(path: str, content: str):
+    with open(path, 'wt') as fh:
+        fh.write(content)

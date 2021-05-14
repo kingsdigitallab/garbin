@@ -11,6 +11,8 @@ Features:
 
 Create a python virtual environment and activate it.
 
+Then run the following commands to install the required python packages.
+
 ```commandline
 pip install pip-tools
 pip-sync
@@ -33,7 +35,9 @@ Process:
 0     data/in/penn-1789-516.pdf           PDF       0.767
 1       data/in/penn-1810-5.txt         ascii       0.892
 2       data/in/penn-1830-5.pdf           PDF       0.859
+```
 
+```commandline
 (venv) $ python garbin.py legible -f csv > data/out/legibility.csv
 ```
 
@@ -42,9 +46,9 @@ Process:
 ```commandline
 $ python garbin.py -h
 
-usage: garbin.py [-h] [-f [{table,json,csv}]] action
+usage: garbin.py [-h] [-f [{table,json,csv}]] [-s] action
 
-Data validator toolbox.
+Data validator toolbox (0.2)
 
 positional arguments:
   action                help, legible, test
@@ -53,6 +57,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -f [{table,json,csv}], --format [{table,json,csv}]
                         output format
+  -s, --save            save intermediary outputs into data/out/ folder
 
 Actions:
   help: Show help
