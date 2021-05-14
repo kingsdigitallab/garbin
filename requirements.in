@@ -1,0 +1,9 @@
+# Create a virtual environment then
+# pip install pip-tools
+# pip-compile # after any change to this file
+# pip-sync    # to install requirements.txt into your environment
+pandas   # csv/json output
+nltk     # check if tokens are proper word
+chardet  # detect file encoding
+PyMuPDF  # extract text from pdf
+textract # OCR a PDF
