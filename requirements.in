@@ -3,7 +3,9 @@
 # pip-compile # after any change to this file
 # pip-sync    # to install requirements.txt into your environment
 pandas   # csv/json output
-nltk     # check if tokens are proper word
+# nltk     # check if tokens are proper words
+pyenchant  # check if tokens are proper words and suggest corrections
 chardet  # detect file encoding
-PyMuPDF  # extract text from pdf
+# PyMuPDF  # extract text from pdf
 textract # OCR a PDF
+tqdm

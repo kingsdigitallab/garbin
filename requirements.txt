@@ -12,8 +12,6 @@ chardet==3.0.4
     # via
     #   -r requirements.in
     #   textract
-click==8.0.0
-    # via nltk
 docx2txt==0.8
     # via textract
 ebooklib==0.17.1
@@ -22,14 +20,10 @@ extract-msg==0.23.1
     # via textract
 imapclient==2.1.0
     # via extract-msg
-joblib==1.0.1
-    # via nltk
 lxml==4.6.3
     # via
     #   ebooklib
     #   python-pptx
-nltk==3.6.2
-    # via -r requirements.in
 numpy==1.20.3
     # via pandas
 olefile==0.46
@@ -42,7 +36,7 @@ pillow==8.2.0
     # via python-pptx
 pycryptodome==3.10.1
     # via pdfminer.six
-pymupdf==1.18.13
+pyenchant==3.2.0
     # via -r requirements.in
 python-dateutil==2.8.1
     # via pandas
@@ -50,8 +44,6 @@ python-pptx==0.6.18
     # via textract
 pytz==2021.1
     # via pandas
-regex==2021.4.4
-    # via nltk
 six==1.12.0
     # via
     #   ebooklib
@@ -67,7 +59,7 @@ speechrecognition==3.8.1
 textract==1.6.3
     # via -r requirements.in
 tqdm==4.60.0
-    # via nltk
+    # via -r requirements.in
 tzlocal==1.5.1
     # via extract-msg
 xlrd==1.2.0

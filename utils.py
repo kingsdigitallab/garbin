@@ -1,26 +1,6 @@
-import math
 import os
 import re
 import urllib
-import pandas as pd
-import nltk
-
-STEMMER = nltk.stem.porter.PorterStemmer()
-LEMMATIZER = nltk.stem.wordnet.WordNetLemmatizer()
-STOP_WORDS = nltk.corpus.stopwords.words("english")
-STOP_WORDS.extend(
-    'further chap sic act supplement resolution entituled entitled chapter section'.split())
-
-
-class Bidict(dict):
-    '''A python dict with a method to get a key from a value'''
-
-    def get_key_from_val(self, val, default=None):
-        ret = default
-        keys = [k for k, v in self.items() if v == val]
-        if keys:
-            ret = keys[0]
-        return ret
 
 
 def read_file(path):
@@ -40,24 +20,21 @@ def extract_text_from_pdf(pdf_path, use_tesseract=False):
         extract embedded text otherwise.
     :return: utf-8 string with the text content of the pdf
     '''
+    method = 'pdftotext'
     if use_tesseract:
-        import textract
-        try:
-            ret = textract.process(
-                pdf_path,
-                method='tesseract',
-                language='eng',
-                encoding='utf-8'
-            )
-            ret = ret.decode('utf8')
-        except UnicodeDecodeError as e:
-            ret = f'ERROR: {e}'
-    else:
-        import fitz  # this is pymupdf
-        with fitz.open(pdf_path) as doc:
-            ret = ''
-            for page in doc:
-                ret += page.getText()
+        method = 'tesseract'
+    import textract
+
+    try:
+        ret = textract.process(
+            pdf_path,
+            method=method,
+            language='eng',
+            encoding='utf-8'
+        )
+        ret = ret.decode('utf8')
+    except UnicodeDecodeError as e:
+        ret = f'ERROR: {e}'
 
     return ret
 
@@ -90,7 +67,6 @@ def repair_ocred_text(text):
     ret = re.sub(r'\s+', r' ', ret)
 
     return ret.strip()
-
 
 
 def download(url, out_path):

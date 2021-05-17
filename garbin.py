@@ -1,7 +1,7 @@
 import argparse
 import re
 import sys
-import nltk
+import enchant
 from tqdm import tqdm
 import chardet
 from pathlib import Path
@@ -153,15 +153,12 @@ class Garbin:
             for token in tokens:
                 if len(token) > 1:
                     found += 1
-                    if token == token.upper():
-                        token = token.lower()
+                    token = token.lower()
 
                     if re.match(r'\d+', token):
+                        # number
                         correct += 1
-                        continue
-                    if not re.match(r'[A-Za-z][a-z]+', token):
-                        continue
-                    else:
+                    elif re.match(r'[A-Za-z][a-z]+', token):
                         correct += self.is_word(token)
 
         if found > 0:
@@ -169,41 +166,27 @@ class Garbin:
 
         file_info['legibility'] = int(ret*1000)/1000
 
-    def read_nltk_words(self):
-        if not self.nltk_words:
-            try:
-                ret = nltk.corpus.words.words()
-            except LookupError:
-                nltk.download('words')
-                ret = nltk.corpus.words.words()
+    def is_word(self, token):
+        if not hasattr(self, 'enchant_dict'):
+            self.enchant_dict = enchant.Dict('en_US')
 
-            self.nltk_words = [w.lower().replace('z', 's') for w in ret]
+        edict = self.enchant_dict
 
-        return self.nltk_words
+        ret = edict.check(token.title())
 
-    def is_word(self, atoken):
-        '''
-        :param atoken: a unicode token (word, number, ...)
-        :return: True if atoken is an English word
+        if not ret:
+            # try f->s
+            token = token.lower().replace('f', 's')
+            ret = edict.check(token.title())
 
-        Lookup token in NLTK corpus vocabulary.
-        Deals with simple s-plural, -ed and z/s cases.
-        '''
+        # if not ret:
+        #     print(token, edict.suggest(token))
 
-        token = atoken.lower().replace('z', 's')
-        ret = token in self.read_nltk_words()
-        if not ret and token.endswith('s'):
-            token = token[:-1]
-            ret = token in self.read_nltk_words()
-        if not ret and token.endswith('ed'):
-            # authorised -> authorise
-            token = token[:-1]
-            ret = token in self.read_nltk_words()
-            if not ret:
-                # enacted -> enact
-                token = token[:-1]
-                ret = token in self.read_nltk_words()
         return ret
+
+    def normalise_token(self, token):
+        # f->s: Because Pennfyvlania, eftablifh
+        return token.lower().replace('z', 's').replace('f', 's')
 
 
 if __name__ == '__main__':
